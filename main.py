@@ -5,13 +5,12 @@ import os
 import time
 import threading
 
-from typing import Union, Annotated
+from typing import Annotated
 
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import youtube_dl.YoutubeDL
 
 app = FastAPI()
 
@@ -33,7 +32,7 @@ def filename_hook(d):
 
 
 def delete_file(filename):
-    time.sleep(10)
+    time.sleep(10*60)
     os.remove("templates/static/"+filename)
 
 
