@@ -4,6 +4,7 @@ import yt_dlp
 import os
 import time
 import threading
+import random
 
 from typing import Annotated
 
@@ -19,6 +20,35 @@ app.mount("/static", StaticFiles(directory="templates/static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 filenames = {}
+proxies = []
+
+if not os.path.exists("proxies.txt"):
+    print("please provide a list of proxies separated by newlines in proxies.txt")
+    exit(0)
+
+with open("proxies.txt", "r") as file:
+    lines = file.readlines()
+    for proxy in lines:
+        proxy = proxy.strip()
+        original = proxy
+
+        if proxy.startswith("https://"):
+            proxy = proxy.strip("https://")
+        elif proxy.startswith("http://"):
+            proxy = proxy.strip("http://")
+        else:  # proxy must be a url
+            continue
+
+        try:
+            username_password, ip_port = proxy.split("@")
+            if not len(username_password.split(":")) == 2:
+                continue
+            if not len(ip_port.split(":")) == 2:
+                continue
+        except:
+            continue
+
+        proxies.insert(0, original)
 
 
 def filename_hook(d):
@@ -39,6 +69,8 @@ def delete_file(filename):
 def yt_dlp_download_video(url: str, opts: dict) -> str:
     video_id = ""
     opts['progress_hooks'] = [filename_hook]
+    if len(proxies) > 0:
+        opts['proxy'] = proxies[random.randint(0, len(proxies))]
     with yt_dlp.YoutubeDL(opts) as ydl:
         res = ydl.extract_info(url, download=True)
 

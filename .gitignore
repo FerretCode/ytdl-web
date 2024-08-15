@@ -1,3 +1,4 @@
 .venv/
 templates/static/
 __pycache__/
+proxies.txt
