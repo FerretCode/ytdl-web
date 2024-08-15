@@ -70,7 +70,7 @@ def yt_dlp_download_video(url: str, opts: dict) -> str:
     video_id = ""
     opts['progress_hooks'] = [filename_hook]
     if len(proxies) > 0:
-        opts['proxy'] = proxies[random.randint(0, len(proxies))]
+        opts['proxy'] = proxies[random.randint(0, len(proxies)-1)]
     with yt_dlp.YoutubeDL(opts) as ydl:
         res = ydl.extract_info(url, download=True)
 
